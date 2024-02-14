@@ -1,0 +1,178 @@
+/*
+Christopher Hernandez
+CRN: 3024
+2/5/2024
+Course: CEN Software Development 1
+ */
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+// The Gunpla class objective is to have private commands that contain elements in preparation for user input of Gunpla data by mobile suit names, build grades, price, and availability so that the inputs can lay out a return
+class Gunpla {
+    private String GunplaMobileSuitName;
+    private String GunplaBuildGrade;
+    private double GunplaPrice;
+    private boolean GunplaAvailability;
+
+    public Gunpla(String GunplaMobileSuitName, String GunplaBuildGrade, double GunplaPrice, boolean GunplaAvailability) {
+        this.GunplaMobileSuitName = GunplaMobileSuitName;
+        this.GunplaBuildGrade = GunplaBuildGrade;
+        this.GunplaPrice = GunplaPrice;
+        this.GunplaAvailability = GunplaAvailability;
+    }
+
+    public String GetGunplaMobileSuitName() {
+        return GunplaMobileSuitName;
+    }
+
+    public String GetGunplaBuildGrade() {
+        return GunplaBuildGrade;
+    }
+
+    public double GetGunplaPrice() {
+        return GunplaPrice;
+    }
+
+    public boolean IsGunplaAvailable() {
+        return GunplaAvailability;
+    }
+
+    public void SetGunplaPrice(double GunplaPrice) {
+        this.GunplaPrice = GunplaPrice;
+    }
+
+    public void SetGunplaAvailability(boolean GunplaAvailability) {
+        this.GunplaAvailability = GunplaAvailability;
+    }
+}
+
+// This application will ask users to add, remove, update retail price, and update availability of Gunpla by entering the 4 choices in the process when running the database which will return the input by users when users select the 5th option to view the Gunpla lineup, and when the user is done inputting they can choose the 6th option to exit the application when the application is done being used.
+
+public class Main {
+    private static Map<String, Gunpla> database = new HashMap<>();
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        boolean running = true;
+        while (running) {
+            System.out.println("Welcome to the Gunpla Database Management System");
+            System.out.println("1. Add Gunpla");
+            System.out.println("2. Remove Gunpla");
+            System.out.println("3. Update Gunpla Retail Price");
+            System.out.println("4. Update Gunpla Availability");
+            System.out.println("5. View Gunpla Lineup");
+            System.out.println("6. Exit");
+            System.out.println("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    AddGunpla();
+                    break;
+                case 2:
+                    RemoveGunpla();
+                    break;
+                case 3:
+                    UpdateGunplaPrice();
+                    break;
+                case 4:
+                    UpdateGunplaAvailability();
+                    break;
+                case 5:
+                    ViewGunplaLineup();
+                    break;
+                case 6:
+                    running = false;
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+
+    // This static method will involve users to add Gunpla by inputting the name of the mobile suit, build grade, price, and availability from scanners that will scan the print lines from user input.
+    private static void AddGunpla() {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Price: ");
+        double GunplaPrice = scanner.nextDouble();
+        System.out.print("Is the Gunpla available? (true/false): ");
+        boolean GunplaAvailability = scanner.nextBoolean();
+
+        // This functionality will notify users that Gunpla data have been added successfully after input and when displaying the result the inputted data will show.
+        Gunpla gunpla = new Gunpla(GunplaMobileSuitName, GunplaBuildGrade, GunplaPrice, GunplaAvailability);
+        database.put(GunplaMobileSuitName + "-" + GunplaBuildGrade, gunpla);
+        System.out.println("Gunpla Added Successfully.");
+    }
+
+    // This static method will involve users to remove Gunpla by inputting the name of the mobile suit and build grade where the data of the model will no longer be in the resulted lineup.
+    private static void RemoveGunpla() {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+
+        // This functionality will display a result that shows the Gunpla removed successfully once inputted by the user, but there is another result that can tell users that the Gunpla they try to remove may not be in the database.
+        Gunpla RemovedGunpla = database.remove(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+        if(RemovedGunpla != null) {
+            System.out.println("Gunpla Removed Successfully!");
+        } else {
+            System.out.println("Gunpla not found in the database.");
+        }
+    }
+
+    // This static method will involve users to update the Gunpla's price by inputting the Gunpla's mobile suit name and build grade that is in the database and once inputted the user will be able to enter the new retail price for the Gunpla.
+    private static void UpdateGunplaPrice() {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+
+        // This functionality will allow users to enter the new retail for the Gunpla they input in and a resuilt will pop out that shows the successful update, but if the Gunpla is not in the database then an output will result in showing the Gunpla is not found in the database.
+        Gunpla gunpla = database.get(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+        if(gunpla != null) {
+            System.out.print("Enter the Gunpla's new Retail Price: ");
+            double GunplaPrice = scanner.nextDouble();
+            gunpla.SetGunplaPrice(GunplaPrice);
+            System.out.println("Gunpla Price Updated Successfully!");
+        } else {
+            System.out.println("Gunpla not found in the database.");
+        }
+    }
+
+    // This static method will allow users to change the availability status of the Gunpla by name of the mobile suit and build grade they inputted.
+    private static void UpdateGunplaAvailability() {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+
+        // This functionality will allow users to update the availability status of the Gunpla model that exists in the database with a result that shows the update is successful, but if the Gunpla is not in the database then a result will display that the Gunpla is not in the database.
+        Gunpla gunpla = database.get(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+        if(gunpla != null) {
+            System.out.print("Is the Gunpla available? (true/false): ");
+            boolean GunplaAvailability = scanner.nextBoolean();
+            gunpla.SetGunplaAvailability(GunplaAvailability);
+            System.out.println("Gunpla Availability Status Updated Successfully!");
+        } else {
+            System.out.println("Gunpla not found in the database.");
+        }
+    }
+
+    // This static method with the accompanying functions will result a display that shows the Gunpla data inputted by users will display an output that shows a lineup of Gunpla that is added into the database, and any changes made to the retail price and availability will display once users view the result.
+    private static void ViewGunplaLineup() {
+        if(database.isEmpty()) {
+            System.out.println("No Gunpla found in this database.");
+        } else {
+            System.out.println("Gunpla Stock Lineup:");
+            for(Gunpla gunpla : database.values()) {
+                System.out.println("Gunpla Mobile Suit Name: " + gunpla.GetGunplaMobileSuitName() + ", Gunpla Build Grade: " + gunpla.GetGunplaBuildGrade() + ", Gunpla Retail Price: " + gunpla.GetGunplaPrice() + ", Gunpla Availability Status: " + gunpla.IsGunplaAvailable());
+            }
+        }
+    }
+}
