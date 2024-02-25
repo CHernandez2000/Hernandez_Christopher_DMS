@@ -16,6 +16,7 @@ class Gunpla {
     private double GunplaPrice;
     private boolean GunplaAvailability;
 
+
     public Gunpla(String GunplaMobileSuitName, String GunplaBuildGrade, double GunplaPrice, boolean GunplaAvailability) {
         this.GunplaMobileSuitName = GunplaMobileSuitName;
         this.GunplaBuildGrade = GunplaBuildGrade;
@@ -48,7 +49,7 @@ class Gunpla {
     }
 }
 
-// This application will ask users to add, remove, update retail price, and update availability of Gunpla by entering the 4 choices in the process when running the database which will return the input by users when users select the 5th option to view the Gunpla lineup, and when the user is done inputting they can choose the 6th option to exit the application when the application is done being used.
+// This application will ask users to add, remove, update retail price, and update availability of Gunpla by entering the 4 choices in the process when running the database which will return the input by users when users select the 5th option to view the Gunpla lineup, and when the user is done inputting they can choose the 6th option to exit the application when the application is done being used. Users can even leave a rating too.
 
 public class Main {
     private static Map<String, Gunpla> database = new HashMap<>();
@@ -62,8 +63,9 @@ public class Main {
             System.out.println("2. Remove Gunpla");
             System.out.println("3. Update Gunpla Retail Price");
             System.out.println("4. Update Gunpla Availability");
-            System.out.println("5. View Gunpla Lineup");
-            System.out.println("6. Exit");
+            System.out.println("5. Check Gunpla Existence");
+            System.out.println("6. View Gunpla Lineup");
+            System.out.println("7. Exit");
             System.out.println("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
@@ -82,9 +84,17 @@ public class Main {
                     UpdateGunplaAvailability();
                     break;
                 case 5:
-                    ViewGunplaLineup();
+                    CheckGunplaExistence();
                     break;
                 case 6:
+                    ViewGunplaLineup();
+                    break;
+                case 7:
+                    System.out.println("Thank you for using the Gunpla DMS!");
+                    while(choice != 7);
+                    System.out.print("Please rate the Gunpla DMS program from 1 to 10 (1-4 for bad, 5-6 for average, and 7-10 for good): ");
+                    int rating = scanner.nextInt();
+                    System.out.println("Thank you for your rating of the Gunpla DMS program! Your rating is very much appreciated. Your rating: " + rating);
                     running = false;
                     break;
                 default:
@@ -164,6 +174,22 @@ public class Main {
         }
     }
 
+    // This is a custom static method will allow users to check the existence of the Gunpla model that exists in the database with a result that shows the Gunpla existing or not existing in the database.
+    private static void CheckGunplaExistence() {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+
+        // This functionality will allow users to check the existence of the Gunpla model in the database.
+        Gunpla gunpla = database.get(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+        if(gunpla != null) {
+            System.out.println("Gunpla does exist!");
+        } else {
+            System.out.println("Gunpla does not exist!");
+        }
+    }
+
     // This static method with the accompanying functions will result a display that shows the Gunpla data inputted by users will display an output that shows a lineup of Gunpla that is added into the database, and any changes made to the retail price and availability will display once users view the result.
     private static void ViewGunplaLineup() {
         if(database.isEmpty()) {
@@ -171,7 +197,7 @@ public class Main {
         } else {
             System.out.println("Gunpla Stock Lineup:");
             for(Gunpla gunpla : database.values()) {
-                System.out.println("Gunpla Mobile Suit Name: " + gunpla.GetGunplaMobileSuitName() + ", Gunpla Build Grade: " + gunpla.GetGunplaBuildGrade() + ", Gunpla Retail Price: " + gunpla.GetGunplaPrice() + ", Gunpla Availability Status: " + gunpla.IsGunplaAvailable());
+                System.out.println("Gunpla Mobile Suit Name: " + gunpla.GetGunplaMobileSuitName() + ", Gunpla Build Grade: " + gunpla.GetGunplaBuildGrade() + ", Gunpla Retail Price: $" + gunpla.GetGunplaPrice() + ", Gunpla Availability Status: " + gunpla.IsGunplaAvailable());
             }
         }
     }
