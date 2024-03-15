@@ -5,9 +5,8 @@ CRN: 3024
 Course: CEN Software Development 1
  */
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 // The Gunpla class objective is to have private commands that contain elements in preparation for user input of Gunpla data by mobile suit names, build grades, price, and availability so that the inputs can lay out a return
 class Gunpla {
@@ -47,149 +46,199 @@ class Gunpla {
     public void SetGunplaAvailability(boolean GunplaAvailability) {
         this.GunplaAvailability = GunplaAvailability;
     }
+
+    public String toString() {
+        return "Gunpla Mobile Suit Name: " + GunplaMobileSuitName + ", Gunpla Build Grade: " + GunplaBuildGrade + ", Gunpla Price: $" + GunplaPrice + ", Gunpla Availability: " + (GunplaAvailability ? "Yes" : "No");
+    }
 }
 
 // The GunplaDatabase main class contains methods for users to add, remove, update both the price and availability status, check existence, and view Gunpla lineup.
 
 public class GunplaDatabase {
-    private Map<String, Gunpla> database;
 
-    public GunplaDatabase() {
-        this.database = new HashMap<>();
+    private static final String DATABASE_FILE = "gunpla_data.txt";
+    private static final List<Gunpla> database = new ArrayList<>();
+
+    // This application will ask users to add, remove, update retail price, and update availability of Gunpla by entering the 4 choices in the process when running the database which will return the input by users when users select the 6th option to view the Gunpla lineup, when users select the 5th option the can check the existence of Gunpla models in the database, and when the user is done inputting they can choose the 7th option to exit the application when the application is done being used. Users can even leave a rating too.
+
+    public static void main (String[] args) {
+        LoadGunplaDatabase();
+        Scanner scanner = new Scanner(System.in);
+
+        int choice;
+        do {
+            System.out.println("Welcome to the Gunpla Database Management System");
+            System.out.println("1. Add Gunpla");
+            System.out.println("2. Remove Gunpla");
+            System.out.println("3. Update Gunpla Retail Price");
+            System.out.println("4. Update Gunpla Availability");
+            System.out.println("5. Check Gunpla Existence");
+            System.out.println("6. View Gunpla Lineup");
+            System.out.println("7. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    AddGunpla(scanner);
+                    break;
+                case 2:
+                    RemoveGunpla(scanner);
+                    break;
+                case 3:
+                    UpdateGunplaPrice(scanner);
+                    break;
+                case 4:
+                    UpdateGunplaAvailability(scanner);
+                    break;
+                case 5:
+                    CheckGunplaExistence(scanner);
+                    break;
+                case 6:
+                    ViewGunplaLineup();
+                    break;
+                case 7:
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please enter a number between 1 and 7.");
+            }
+        } while (choice != 7);
+
+        SaveGunplaDatabase();
+        System.out.println("Thank you for using the Gunpla Database Management System!");
+
+        System.out.print("Enter your rating from 1 to 10 (1-4 for bad, 5-6 for average, and 7-10 for good): ");
+        int rating = scanner.nextInt();
+        System.out.println("Thank you for rating the Gunpla DMS. Your rating of the Gunpla DMS is greatly appreciated for feedback, and here's your rating: " + rating);
     }
 
     // The AddGunpla method allows users to add in Gunpla into the database by inputting the name of the mobile suit fromthe Gundam franchise, build grade of the Gunpla models, retail price of the Gunpla model, and availability status of the Gunpla.
 
-    public void AddGunpla(String GunplaMobileSuitName, String GunplaBuildGrade, double GunplaPrice, boolean GunplaAvailability) {
-        database.put(GunplaMobileSuitName + "-" + GunplaBuildGrade, new Gunpla(GunplaMobileSuitName, GunplaBuildGrade, GunplaPrice, GunplaAvailability));
+    private static void AddGunpla(Scanner scanner) {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Price: ");
+        double GunplaPrice = scanner.nextDouble();
+        System.out.print("Is the Gunpla available? (true/false): ");
+        boolean GunplaAvailability = scanner.nextBoolean();
+        database.add(new Gunpla(GunplaMobileSuitName, GunplaBuildGrade, GunplaPrice, GunplaAvailability));
+        System.out.println("Gunpla Added Successfully.");
     }
 
     // The RemoveGunpla method allows users to remove Gunpla from the database by inputting the mobile suit name and the specific build grade.
 
-    public void RemoveGunpla(String GunplaMobileSuitName, String GunplaBuildGrade) {
-        database.remove(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+    private static void RemoveGunpla(Scanner scanner) {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+        Iterator<Gunpla> iterator = database.iterator();
+        while (iterator.hasNext()) {
+            Gunpla gunpla = iterator.next();
+            if (gunpla.GetGunplaMobileSuitName().equalsIgnoreCase(GunplaMobileSuitName) && gunpla.GetGunplaBuildGrade().equalsIgnoreCase(GunplaBuildGrade)) {
+                iterator.remove();
+                System.out.println("Gunpla Removed Successfully.");
+                return;
+            }
+        }
+        System.out.println("Gunpla not found in the database.");
     }
 
     // The UpdateGunplaPrice method allows users to update the price of Gunpla models from the database by first having to input the mobile suit name and build grade first, and then input the price numbers for an update.
 
-    public void UpdateGunplaPrice(String GunplaMobileSuitName, String GunplaBuildGrade, double GunplaPrice) {
-        Gunpla gunpla = database.get(GunplaMobileSuitName + "-" + GunplaBuildGrade);
-        if (gunpla != null) {
-            gunpla.SetGunplaPrice(GunplaPrice);
-            System.out.println("Gunpla Price Updated Successfully!");
-        } else {
-            System.out.println("Gunpla not found in the database.");
+    private static void UpdateGunplaPrice(Scanner scanner) {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+        for (Gunpla gunpla : database) {
+            if(gunpla.GetGunplaMobileSuitName().equalsIgnoreCase(GunplaMobileSuitName) && gunpla.GetGunplaBuildGrade().equalsIgnoreCase(GunplaBuildGrade)) {
+                System.out.print("Enter the Gunpla's new Retail Price: ");
+                double GunplaPrice = scanner.nextDouble();
+                gunpla.SetGunplaPrice(GunplaPrice);
+                System.out.println("Gunpla retail price updated successfully.");
+                return;
+            }
         }
+        System.out.println("Gunpla not found in the database.");
     }
 
     // The UpdateGunplaAvailability method allows users to update the availability status of Gunpla models from the database by first having to input the mobile suit name and build grade first, and then input the availability status for an update.
 
-    public void UpdateGunplaAvailability(String GunplaMobileSuitName, String GunplaBuildGrade, boolean GunplaAvailability) {
-        Gunpla gunpla = database.get(GunplaMobileSuitName + "-" + GunplaBuildGrade);
-        if (gunpla != null) {
-            gunpla.SetGunplaAvailability(GunplaAvailability);
-            System.out.println("Gunpla Availability Status Updated Successfully!");
-        } else {
-            System.out.println("Gunpla not found in the database.");
+    private static void UpdateGunplaAvailability(Scanner scanner) {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+        for(Gunpla gunpla : database) {
+            if(gunpla.GetGunplaMobileSuitName().equalsIgnoreCase(GunplaMobileSuitName) && gunpla.GetGunplaBuildGrade().equalsIgnoreCase(GunplaBuildGrade)) {
+                System.out.print("Is the Gunpla available? (true/false): ");
+                boolean GunplaAvailability = scanner.nextBoolean();
+                gunpla.SetGunplaAvailability(GunplaAvailability);
+                System.out.println("Gunpla availability status updated successfully.");
+                return;
+            }
         }
+        System.out.println("Gunpla not found in the database.");
     }
 
     // The CheckGunplaExistence is a custom method which allows users to check the existence of the Gunpla model that is added into the database.
 
-    public boolean CheckGunplaExistence(String GunplaMobileSuitName, String GunplaBuildGrade) {
-        return database.containsKey(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+    private static void CheckGunplaExistence(Scanner scanner) {
+        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
+        String GunplaMobileSuitName = scanner.nextLine();
+        System.out.print("Enter the Gunpla's Build Grade: ");
+        String GunplaBuildGrade = scanner.nextLine();
+        for(Gunpla gunpla : database) {
+            if (gunpla.GetGunplaMobileSuitName().equalsIgnoreCase(GunplaMobileSuitName) && gunpla.GetGunplaBuildGrade().equalsIgnoreCase(GunplaBuildGrade)) {
+                System.out.println("Gunpla exists in the database.");
+                return;
+            }
+        }
+        System.out.println("Gunpla not found in the database.");
     }
 
     // The ViewGunplaLineup is a method in which users can check out the lineup of Gunpla models that are inputted into the database.
 
-    public void ViewGunplaLineup() {
-        if (database.isEmpty()) {
-            System.out.println("No Gunpla found in this database.");
+    private static void ViewGunplaLineup() {
+        if(database.isEmpty()) {
+            System.out.println("Gunpla stock lineup is empty.");
         } else {
-            System.out.println("Gunpla Stock Lineup:");
-            for (Gunpla gunpla : database.values()) {
-                System.out.println("Gunpla Mobile Suit Name: " + gunpla.GetGunplaMobileSuitName() + ", Gunpla Build Grade: " + gunpla.GetGunplaBuildGrade() + ", Gunpla Retail Price: $" + gunpla.GetGunplaPrice() + ", Gunpla Availability Status: " + gunpla.IsGunplaAvailable());
+            System.out.println("Gunpla stock lineup: ");
+            for (Gunpla gunpla : database) {
+                System.out.println(gunpla);
             }
         }
     }
 
-    // This application will ask users to add, remove, update retail price, and update availability of Gunpla by entering the 4 choices in the process when running the database which will return the input by users when users select the 6th option to view the Gunpla lineup, when users select the 5th option the can check the existence of Gunpla models in the database, and when the user is done inputting they can choose the 7th option to exit the application when the application is done being used. Users can even leave a rating too.
-
-    public static void main (String[]args){
-            GunplaDatabase database = new GunplaDatabase();
-            Scanner scanner = new Scanner(System.in);
-
-            while (true) {
-                System.out.println("Welcome to the Gunpla Database Management System");
-                System.out.println("1. Add Gunpla");
-                System.out.println("2. Remove Gunpla");
-                System.out.println("3. Update Gunpla Retail Price");
-                System.out.println("4. Update Gunpla Availability");
-                System.out.println("5. Check Gunpla Existence");
-                System.out.println("6. View Gunpla Lineup");
-                System.out.println("7. Exit");
-                System.out.println("Enter your choice: ");
-                int choice = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (choice) {
-                    case 1:
-                        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
-                        String GunplaMobileSuitName = scanner.nextLine();
-                        System.out.print("Enter the Gunpla's Build Grade: ");
-                        String GunplaBuildGrade = scanner.nextLine();
-                        System.out.print("Enter the Gunpla's Price: ");
-                        double GunplaPrice = scanner.nextDouble();
-                        System.out.print("Is the Gunpla available? (true/false): ");
-                        boolean GunplaAvailability = scanner.nextBoolean();
-                        database.AddGunpla(GunplaMobileSuitName, GunplaBuildGrade, GunplaPrice, GunplaAvailability);
-                        System.out.println("Gunpla Added Successfully.");
-                        break;
-                    case 2:
-                        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
-                        GunplaMobileSuitName = scanner.nextLine();
-                        System.out.print("Enter the Gunpla's Build Grade: ");
-                        GunplaBuildGrade = scanner.nextLine();
-                        database.RemoveGunpla(GunplaMobileSuitName, GunplaBuildGrade);
-                        System.out.println("Gunpla Removed Successfully.");
-                        break;
-                    case 3:
-                        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
-                        GunplaMobileSuitName = scanner.nextLine();
-                        System.out.print("Enter the Gunpla's Build Grade: ");
-                        GunplaBuildGrade = scanner.nextLine();
-                        System.out.print("Enter the Gunpla's new Retail Price: ");
-                        GunplaPrice = scanner.nextDouble();
-                        database.UpdateGunplaPrice(GunplaMobileSuitName, GunplaBuildGrade, GunplaPrice);
-                        break;
-                    case 4:
-                        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
-                        GunplaMobileSuitName = scanner.nextLine();
-                        System.out.print("Enter the Gunpla's Build Grade: ");
-                        GunplaBuildGrade = scanner.nextLine();
-                        System.out.print("Is the Gunpla available? (true/false): ");
-                        GunplaAvailability = scanner.nextBoolean();
-                        database.UpdateGunplaAvailability(GunplaMobileSuitName, GunplaBuildGrade, GunplaAvailability);
-                        break;
-                    case 5:
-                        System.out.print("Enter the Gunpla's Mobile Suit Name: ");
-                        GunplaMobileSuitName = scanner.nextLine();
-                        System.out.print("Enter the Gunpla's Build Grade: ");
-                        GunplaBuildGrade = scanner.nextLine();
-                        System.out.println(database.CheckGunplaExistence(GunplaMobileSuitName, GunplaBuildGrade) ? "The Gunpla model exists in the database." : "The Gunpla model does not exist in the database.");
-                        break;
-                    case 6:
-                        database.ViewGunplaLineup();
-                        break;
-                    case 7:
-                        System.out.println("Thank you for using the Gunpla DMS!");
-                        System.out.print("Please rate the Gunpla DMS program from 1 to 10 (1-4 for bad, 5-6 for average, and 7-10 for good): ");
-                        int rating = scanner.nextInt();
-                        System.out.println("Thank you for your rating of the Gunpla DMS program! Your rating is very much appreciated. Your rating: " + rating);
-                        return;
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                }
+    private static void LoadGunplaDatabase() {
+        try (BufferedReader reader = new BufferedReader(new FileReader(DATABASE_FILE))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                String GunplaMobileSuitName = data[0];
+                String GunplaBuildGrade = data[1];
+                double GunplaPrice = Double.parseDouble(data[2]);
+                boolean GunplaAvailability = Boolean.parseBoolean(data[3]);
+                database.add(new Gunpla(GunplaMobileSuitName, GunplaBuildGrade, GunplaPrice, GunplaAvailability));
             }
+            System.out.println("Gunpla data loaded successfully from file.");
+        } catch (IOException e) {
+            System.out.println("Error loading Gunpla database: " + e.getMessage());
         }
     }
+
+    private static void SaveGunplaDatabase() {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(DATABASE_FILE))) {
+            for (Gunpla gunpla : database) {
+                writer.println(gunpla.GetGunplaMobileSuitName() + ", " + gunpla.GetGunplaBuildGrade() + ", " + gunpla.GetGunplaPrice() + ", " + gunpla.IsGunplaAvailable());
+            }
+            System.out.println("Gunpla data saved successfully to file.");
+        } catch (IOException e) {
+            System.out.println("Error saving Gunpla database: " + e.getMessage());
+        }
+    }
+}
