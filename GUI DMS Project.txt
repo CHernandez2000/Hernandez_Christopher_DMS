@@ -1,0 +1,155 @@
+import javax.swing.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
+
+public class GunplaDMSGUI {
+    private HashMap<String, Gunpla> GunplaDatabase;
+    private JFrame frame;
+
+    // This public class shows buttons for users to select when running the GUI.
+    public GunplaDMSGUI() {
+        GunplaDatabase = new HashMap<>();
+        frame = new JFrame("Gunpla Database Management System");
+        frame.setSize(400, 300);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        JButton AddGunplaButton = new JButton("Add Gunpla");
+        JButton RemoveGunplaButton = new JButton("Remove Gunpla");
+        JButton UpdateGunplaPriceButton = new JButton("Update Gunpla Price");
+        JButton UpdateGunplaAvailabilityButton = new JButton("Update Gunpla Availability");
+        JButton CheckGunplaExistenceButton = new JButton("Check Gunpla Existence");
+        JButton ViewGunplaLineupButton = new JButton("View Gunpla Lineup");
+        JButton SaveFileButton = new JButton("Save File");
+        JButton ExitButton = new JButton("Exit");
+
+        // This method allows users to add Gunpla model's into the database by inputting the Gunpla's mobile suit name, build grade, retail price, and availability status.
+        AddGunplaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String GunplaMobileSuitName = JOptionPane.showInputDialog(frame, "Enter Gunpla Mobile Suit Name:");
+                String GunplaBuildGrade = JOptionPane.showInputDialog(frame, "Enter Gunpla Build Grade:");
+                double GunplaPrice = Double.parseDouble(JOptionPane.showInputDialog(frame, "Enter the Gunpla's Price:"));
+                boolean GunplaAvailability = Boolean.parseBoolean(JOptionPane.showInputDialog(frame, "Enter the Gunpla's Availability status (true/false):"));
+
+                GunplaDatabase.put(GunplaMobileSuitName + "-" + GunplaBuildGrade, new Gunpla(GunplaMobileSuitName, GunplaBuildGrade, GunplaPrice, GunplaAvailability));
+            }
+        });
+
+        // This method allows users to remove Gunpla model's by inputting the mobile suit name and build grade to remove the Gunpla from the database.
+        RemoveGunplaButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String GunplaMobileSuitName = JOptionPane.showInputDialog(frame, "Enter Gunpla Mobile Suit Name:");
+                String GunplaBuildGrade = JOptionPane.showInputDialog(frame, "Enter Gunpla Build Grade:");
+
+                GunplaDatabase.remove(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+            }
+        });
+
+        // This method allows users to update the retail price of a Gunpla model in the database by inputting the mobile suit name and build grade and then inputting the new retail price.
+        UpdateGunplaPriceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String GunplaMobileSuitName = JOptionPane.showInputDialog(frame, "Enter Gunpla Mobile Suit Name:");
+                String GunplaBuildGrade = JOptionPane.showInputDialog(frame, "Enter Gunpla Build Grade:");
+                double GunplaPrice = Double.parseDouble(JOptionPane.showInputDialog(frame, "Enter the Gunpla's Price:"));
+
+                Gunpla gunpla = GunplaDatabase.get(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+                if (gunpla != null) {
+                    gunpla.SetGunplaPrice(GunplaPrice);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Gunpla not found in the database.");
+                }
+            }
+        });
+
+        // This method allows users to update the availability status of a Gunpla model in the database by inputting the mobile suit name and build grade and then inputting the new availability status.
+        UpdateGunplaAvailabilityButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String GunplaMobileSuitName = JOptionPane.showInputDialog(frame, "Enter Gunpla Mobile Suit Name:");
+                String GunplaBuildGrade = JOptionPane.showInputDialog(frame, "Enter Gunpla Build Grade:");
+                boolean GunplaAvailability = Boolean.parseBoolean(JOptionPane.showInputDialog(frame, "Enter the Gunpla's Availability status (true/false):"));
+
+                Gunpla gunpla = GunplaDatabase.get(GunplaMobileSuitName + "-" + GunplaBuildGrade);
+                if (gunpla != null) {
+                    gunpla.SetGunplaAvailability(GunplaAvailability);
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Gunpla not found in the database.");
+                }
+            }
+        });
+
+        // This custom method allows users to check the Gunpla's existence in the database to see whether the model exists in the database or not.
+        CheckGunplaExistenceButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String GunplaMobileSuitName = JOptionPane.showInputDialog(frame, "Enter Gunpla Mobile Suit Name:");
+                String GunplaBuildGrade = JOptionPane.showInputDialog(frame, "Enter Gunpla Build Grade:");
+
+                if (GunplaDatabase.containsKey(GunplaMobileSuitName + "-" + GunplaBuildGrade)) {
+                    JOptionPane.showMessageDialog(frame, "Gunpla exists in the database.");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Gunpla not found in the database.");
+                }
+            }
+        });
+
+        // This method allows users to view the Gunpla stock lineup that are added into the database.
+        ViewGunplaLineupButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JTextArea text = new JTextArea();
+                for (Gunpla gunpla : GunplaDatabase.values()) {
+                    text.append(gunpla.toString() + "\n");
+                }
+                JOptionPane.showMessageDialog(frame, new JScrollPane(text));
+            }
+        });
+
+        // This method allows users to save the database into the provided file "gunpla_data.txt" as seen below.
+        SaveFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter("gunpla_data.txt"));
+                    for (Gunpla gunpla : GunplaDatabase.values()) {
+                        writer.write(gunpla.toString());
+                        writer.newLine();
+                    }
+                    writer.close();
+                    JOptionPane.showMessageDialog(frame, "Data saved to file successfully.");
+                } catch (IOException exception) {
+                    exception.fillInStackTrace();
+                    JOptionPane.showMessageDialog(frame, "Error saving data to file.");
+                }
+            }
+        });
+
+        // This method allows users to exit the GUI after use.
+        ExitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+
+        JPanel panel = new JPanel();
+        panel.add(AddGunplaButton);
+        panel.add(RemoveGunplaButton);
+        panel.add(UpdateGunplaPriceButton);
+        panel.add(UpdateGunplaAvailabilityButton);
+        panel.add(CheckGunplaExistenceButton);
+        panel.add(ViewGunplaLineupButton);
+        panel.add(SaveFileButton);
+        panel.add(ExitButton);
+
+        frame.add(panel);
+        frame.setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        new GunplaDMSGUI();
+    }
+}
