@@ -1,0 +1,265 @@
+/*
+Christopher Hernandez
+CRN: 3024
+3/28/2024
+Course: CEN Software Development 1
+*/
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.sql.*;
+
+// This main class allows users to make changes by adding, removing, updating price, updating availability, checking existence, and viewing the lineup of Gunpla models that are displayed in the MySQL database.
+
+public class GunplaJDBC extends JFrame implements ActionListener {
+    private JTextField GunplaNumberField;
+    private JTextField GunplaMobileSuitNameField;
+    private JTextField GunplaBuildGradeField;
+    private JTextField GunplaPriceField;
+    private JTextField GunplaAvailabilityField;
+    private JButton AddGunplaButton;
+    private JButton RemoveGunplaButton;
+    private JButton UpdateGunplaPriceButton;
+    private JButton UpdateGunplaAvailabilityButton;
+    private JButton CheckGunplaExistenceButton;
+    private JButton ViewGunplaLineupButton;
+    private JButton ExitButton;
+    private JTextArea Output;
+    private Connection connection;
+
+    public GunplaJDBC(Connection connection) {
+        this.connection = connection;
+
+        setTitle("Gunpla Database Management System");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(600, 400);
+        setLayout(new BorderLayout());
+
+        JPanel InputPanel = new JPanel(new GridLayout(7, 2));
+        InputPanel.add(new JLabel("Gunpla Number:"));
+        GunplaNumberField = new JTextField();
+        InputPanel.add(GunplaNumberField);
+        InputPanel.add(new JLabel("Gunpla Mobile Suit Name:"));
+        GunplaMobileSuitNameField = new JTextField();
+        InputPanel.add(GunplaMobileSuitNameField);
+        InputPanel.add(new JLabel("Gunpla Build Grade:"));
+        GunplaBuildGradeField = new JTextField();
+        InputPanel.add(GunplaBuildGradeField);
+        InputPanel.add(new JLabel("Gunpla Price:"));
+        GunplaPriceField = new JTextField();
+        InputPanel.add(GunplaPriceField);
+        InputPanel.add(new JLabel("Gunpla Availability Status:"));
+        GunplaAvailabilityField = new JTextField();
+        InputPanel.add(GunplaAvailabilityField);
+
+        AddGunplaButton = new JButton("Add Gunpla");
+        AddGunplaButton.addActionListener(this);
+        InputPanel.add(AddGunplaButton);
+
+        RemoveGunplaButton = new JButton("Remove Gunpla");
+        RemoveGunplaButton.addActionListener(this);
+        InputPanel.add(RemoveGunplaButton);
+
+        UpdateGunplaPriceButton = new JButton("Update Gunpla Price");
+        UpdateGunplaPriceButton.addActionListener(this);
+        InputPanel.add(UpdateGunplaPriceButton);
+
+        UpdateGunplaAvailabilityButton = new JButton("Update Gunpla Availability");
+        UpdateGunplaAvailabilityButton.addActionListener(this);
+        InputPanel.add(UpdateGunplaAvailabilityButton);
+
+        CheckGunplaExistenceButton = new JButton("Check Gunpla Existence");
+        CheckGunplaExistenceButton.addActionListener(this);
+        InputPanel.add(CheckGunplaExistenceButton);
+
+        ViewGunplaLineupButton = new JButton("View Gunpla Lineup");
+        ViewGunplaLineupButton.addActionListener(this);
+        InputPanel.add(ViewGunplaLineupButton);
+
+        ExitButton = new JButton("Exit");
+        ExitButton.addActionListener(this);
+        InputPanel.add(ExitButton);
+
+        Output = new JTextArea();
+        JScrollPane ScrollPane = new JScrollPane(Output);
+
+        add(InputPanel, BorderLayout.NORTH);
+        add(ScrollPane, BorderLayout.CENTER);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == AddGunplaButton) {
+            AddGunpla();
+        } else if (e.getSource() == RemoveGunplaButton) {
+            RemoveGunpla();
+        } else if (e.getSource() == UpdateGunplaPriceButton) {
+            UpdateGunplaPrice();
+        } else if (e.getSource() == UpdateGunplaAvailabilityButton) {
+            UpdateGunplaAvailability();
+        } else if (e.getSource() == CheckGunplaExistenceButton) {
+            CheckGunplaExistence();
+        } else if (e.getSource() == ViewGunplaLineupButton) {
+            ViewGunplaLineup();
+        } else if (e.getSource() == ExitButton) {
+            System.exit(0);
+        }
+    }
+
+    // This method allows users to add Gunpla model's into the MySQL database by first inputting a list number and then inputting the Gunpla model's mobile suit name, build grade, price, and availability status.
+
+    private void AddGunpla() {
+        try {
+            String query = "INSERT INTO GunplaModels (Gunpla_Number, Gunpla_Mobile_Suit_Name, Gunpla_Build_Grade, Gunpla_Price, Gunpla_Availability) VALUES (?, ?, ?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, GunplaNumberField.getText());
+            statement.setString(2, GunplaMobileSuitNameField.getText());
+            statement.setString(3, GunplaBuildGradeField.getText());
+            statement.setDouble(4, Double.parseDouble(GunplaPriceField.getText()));
+            statement.setString(5, GunplaAvailabilityField.getText());
+
+            int RowsAffected = statement.executeUpdate();
+            if (RowsAffected > 0) {
+                Output.setText("Gunpla model added successfully into the database.");
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Output.setText("Error: " + e.getMessage());
+        }
+    }
+
+    // This method allows users to remove a Gunpla model from the MySQL database by inputting the Gunpla model's mobile suit name and build grade.
+
+    private void RemoveGunpla() {
+        try {
+            String query = "DELETE FROM GunplaModels WHERE Gunpla_Mobile_Suit_Name = ? AND Gunpla_Build_Grade = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, GunplaMobileSuitNameField.getText());
+            statement.setString(2, GunplaBuildGradeField.getText());
+
+            int RowsAffected = statement.executeUpdate();
+            if (RowsAffected > 0) {
+                Output.setText("Gunpla model removed successfully from the database.");
+            } else {
+                Output.setText("Gunpla model is not found in the database.");
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Output.setText("Error: " + e.getMessage());
+        }
+    }
+
+    // This method allows users to update the Gunpla model's price from the MySQL database by first inputting the Gunpla model's mobile suit name and build grade, and then lastly typing in the price numbers (You don't need to add a $ or any other currency symbol).
+
+    private void UpdateGunplaPrice() {
+        try {
+            String query = "UPDATE GunplaModels SET Gunpla_Price = ? WHERE Gunpla_Mobile_Suit_Name = ? AND Gunpla_Build_Grade = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setDouble(1, Double.parseDouble(GunplaPriceField.getText()));
+            statement.setString(2, GunplaMobileSuitNameField.getText());
+            statement.setString(3, GunplaBuildGradeField.getText());
+
+            int RowsAffected = statement.executeUpdate();
+            if (RowsAffected > 0) {
+                Output.setText("Gunpla price updated successfully into the database.");
+            } else {
+                Output.setText("Gunpla model is not found in the database.");
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Output.setText("Error: " + e.getMessage());
+        }
+    }
+
+    // This method allows users to update the Gunpla model's availability status from the MySQL database by first inputting the Gunpla model's mobile suit name and build grade, and then lastly typing in "True" or "False" where true means the model is available and false means the model is not available.
+
+    private void UpdateGunplaAvailability() {
+        try {
+            String query = "UPDATE GunplaModels SET Gunpla_Availability = ? WHERE Gunpla_Mobile_Suit_Name = ? AND Gunpla_Build_Grade = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, GunplaAvailabilityField.getText());
+            statement.setString(2, GunplaMobileSuitNameField.getText());
+            statement.setString(3, GunplaBuildGradeField.getText());
+
+            int RowsAffected = statement.executeUpdate();
+            if (RowsAffected > 0) {
+                Output.setText("Gunpla availability updated successfully into the database.");
+            } else {
+                Output.setText("Gunpla model is not found in the database.");
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Output.setText("Error: " + e.getMessage());
+        }
+    }
+
+    // This custom method allows users to check the existence of the Gunpla model within the MySQL database by inputting the Gunpla model's mobile suit name and build grade.
+
+    private void CheckGunplaExistence() {
+        try {
+            String query = "SELECT * FROM GunplaModels WHERE Gunpla_Mobile_Suit_Name = ? AND Gunpla_Build_Grade = ?";
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1, GunplaMobileSuitNameField.getText());
+            statement.setString(2, GunplaBuildGradeField.getText());
+
+            ResultSet result = statement.executeQuery();
+            if (result.next()) {
+                Output.setText("Gunpla model exists in the database.");
+            } else {
+                Output.setText("Gunpla model is not found in the database.");
+            }
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Output.setText("Error: " + e.getMessage());
+        }
+    }
+
+    // This method allows suers to view the lineup of Gunpla models that are already in the MySQL database as well as changes done within the database.
+
+    private void ViewGunplaLineup() {
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery("SELECT * FROM GunplaModels");
+
+            StringBuilder lineup = new StringBuilder();
+            while (result.next()) {
+                lineup.append("Gunpla Number: ").append(result.getString("Gunpla_Number")).append(", ")
+                        .append("Gunpla Mobile Suit Name: ").append(result.getString("Gunpla_Mobile_Suit_Name")).append(", ")
+                        .append("Gunpla Build Grade: ").append(result.getString("Gunpla_Build_Grade")).append(", ")
+                        .append("Gunpla Price: ").append(result.getDouble("Gunpla_Price")).append(", ")
+                        .append("Gunpla Availability Status: ").append(result.getString("Gunpla_Availability")).append("\n");
+            }
+
+            Output.setText(lineup.toString());
+
+            result.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Output.setText("Error: " + e.getMessage());
+        }
+    }
+
+    // When running the program from the main method users are prompted to type in the MySQL file name first and then the username and password in order to be connected to the MySQL database.
+
+    public static void main(String[] args) {
+        String MySQLFile = JOptionPane.showInputDialog("Enter MySQL file name:");
+        String url = "jdbc:mysql://localhost:3306/" + MySQLFile;
+        String username = JOptionPane.showInputDialog("Enter MySQL username:");
+        String password = JOptionPane.showInputDialog("Enter MySQL password:");
+
+        try {
+            Connection connection = DriverManager.getConnection(url, username, password);
+            GunplaJDBC frame = new GunplaJDBC(connection);
+            frame.setVisible(true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Failed to connect to the Gunpla models database.");
+        }
+    }
+}
