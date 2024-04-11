@@ -10,7 +10,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
-// This main class allows users to make changes by adding, removing, updating price, updating availability, checking existence, and viewing the lineup of Gunpla models that are displayed in the MySQL database.
+/**
+ * This main class allows users to make changes by
+ * adding, removing, updating price, updating availability,
+ * checking existence, and viewing the lineup of Gunpla models
+ * that are displayed in the MySQL database.
+ */
+
 
 public class GunplaJDBC extends JFrame implements ActionListener {
     private JTextField GunplaNumberField;
@@ -28,6 +34,8 @@ public class GunplaJDBC extends JFrame implements ActionListener {
     private JTextArea Output;
     private Connection connection;
 
+    // Connection established for the GunplaJDBC for the panels and buttons.
+
     public GunplaJDBC(Connection connection) {
         this.connection = connection;
 
@@ -36,7 +44,7 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         setSize(600, 400);
         setLayout(new BorderLayout());
 
-        JPanel InputPanel = new JPanel(new GridLayout(7, 2));
+        JPanel InputPanel = new JPanel(new GridLayout(5, 1));
         InputPanel.add(new JLabel("Gunpla Number:"));
         GunplaNumberField = new JTextField();
         InputPanel.add(GunplaNumberField);
@@ -88,6 +96,8 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         add(ScrollPane, BorderLayout.CENTER);
     }
 
+    // actionPerformed method used to have the buttons function.
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == AddGunplaButton) {
             AddGunpla();
@@ -106,7 +116,12 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         }
     }
 
-    // This method allows users to add Gunpla model's into the MySQL database by first inputting a list number and then inputting the Gunpla model's mobile suit name, build grade, price, and availability status.
+    /**
+     * This method allows users to add Gunpla model's into the MySQL database by
+     * first inputting a list number and then inputting the Gunpla model's mobile suit name,
+     * build grade, price, and availability status.
+     */
+
 
     private void AddGunpla() {
         try {
@@ -129,7 +144,11 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         }
     }
 
-    // This method allows users to remove a Gunpla model from the MySQL database by inputting the Gunpla model's mobile suit name and build grade.
+    /**
+     * This method allows users to remove a Gunpla model from the MySQL database by
+     * inputting the Gunpla model's mobile suit name and build grade.
+     */
+
 
     private void RemoveGunpla() {
         try {
@@ -151,7 +170,12 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         }
     }
 
-    // This method allows users to update the Gunpla model's price from the MySQL database by first inputting the Gunpla model's mobile suit name and build grade, and then lastly typing in the price numbers (You don't need to add a $ or any other currency symbol).
+    /**
+     * This method allows users to update the Gunpla model's price from the MySQL database by
+     * first inputtingnthe Gunpla model's mobile suit name and build grade,
+     * and then lastly typing in the price numbers (You don't need to add a $ or any other currency symbol).
+     */
+
 
     private void UpdateGunplaPrice() {
         try {
@@ -174,7 +198,13 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         }
     }
 
-    // This method allows users to update the Gunpla model's availability status from the MySQL database by first inputting the Gunpla model's mobile suit name and build grade, and then lastly typing in "True" or "False" where true means the model is available and false means the model is not available.
+    /**
+     * This method allows users to update the Gunpla model's availability status from the MySQL database by
+     * first inputting the Gunpla model's mobile suit name and build grade,
+     * and then lastly typing in "True" or "False" where true means the model is available
+     * and false means the model is not available.
+     */
+
 
     private void UpdateGunplaAvailability() {
         try {
@@ -197,7 +227,11 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         }
     }
 
-    // This custom method allows users to check the existence of the Gunpla model within the MySQL database by inputting the Gunpla model's mobile suit name and build grade.
+    /**
+     * This custom method allows users to check the existence of the Gunpla model within the MySQL database
+     * by inputting the Gunpla model's mobile suit name and build grade.
+     */
+
 
     private void CheckGunplaExistence() {
         try {
@@ -219,7 +253,11 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         }
     }
 
-    // This method allows suers to view the lineup of Gunpla models that are already in the MySQL database as well as changes done within the database.
+    /**
+     * This method allows users to view the lineup of Gunpla models that are already in the MySQL database
+     * as well as changes done within the database.
+     */
+
 
     private void ViewGunplaLineup() {
         try {
@@ -245,7 +283,12 @@ public class GunplaJDBC extends JFrame implements ActionListener {
         }
     }
 
-    // When running the program from the main method users are prompted to type in the MySQL file name first and then the username and password in order to be connected to the MySQL database.
+    /**
+     * When running the program from the main method users are prompted to type in the MySQL file name first
+     * and then the username and password in order to be connected to the MySQL database.
+     * @param args used.
+     */
+
 
     public static void main(String[] args) {
         String MySQLFile = JOptionPane.showInputDialog("Enter MySQL file name:");
