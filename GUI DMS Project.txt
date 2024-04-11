@@ -7,7 +7,10 @@ public class GunplaDMSGUI {
     private HashMap<String, Gunpla> GunplaDatabase;
     private JFrame frame;
 
-    // This public class shows buttons for users to select when running the GUI.
+    /**
+     * This public class shows buttons for users to select when running the GUI.
+     */
+
     public GunplaDMSGUI() {
         GunplaDatabase = new HashMap<>();
         frame = new JFrame("Gunpla Database Management System");
@@ -20,10 +23,15 @@ public class GunplaDMSGUI {
         JButton UpdateGunplaAvailabilityButton = new JButton("Update Gunpla Availability");
         JButton CheckGunplaExistenceButton = new JButton("Check Gunpla Existence");
         JButton ViewGunplaLineupButton = new JButton("View Gunpla Lineup");
+        JButton LoadFileButton = new JButton("Load File");
         JButton SaveFileButton = new JButton("Save File");
         JButton ExitButton = new JButton("Exit");
 
-        // This method allows users to add Gunpla model's into the database by inputting the Gunpla's mobile suit name, build grade, retail price, and availability status.
+        /**
+         * This method allows users to add Gunpla model's into the database by
+         * inputting the Gunpla's mobile suit name, build grade, retail price, and availability status.
+         */
+
         AddGunplaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -36,7 +44,11 @@ public class GunplaDMSGUI {
             }
         });
 
-        // This method allows users to remove Gunpla model's by inputting the mobile suit name and build grade to remove the Gunpla from the database.
+        /**
+         * This method allows users to remove Gunpla model's by inputting
+         * the mobile suit name and build grade to remove the Gunpla from the database.
+         */
+
         RemoveGunplaButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -47,7 +59,11 @@ public class GunplaDMSGUI {
             }
         });
 
-        // This method allows users to update the retail price of a Gunpla model in the database by inputting the mobile suit name and build grade and then inputting the new retail price.
+        /**
+         * This method allows users to update the retail price of a Gunpla model in the database
+         * by inputting the mobile suit name and build grade and then inputting the new retail price.
+         */
+
         UpdateGunplaPriceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -64,7 +80,11 @@ public class GunplaDMSGUI {
             }
         });
 
-        // This method allows users to update the availability status of a Gunpla model in the database by inputting the mobile suit name and build grade and then inputting the new availability status.
+        /**
+         * This method allows users to update the availability status of a Gunpla model in the database
+         * by inputting the mobile suit name and build grade and then inputting the new availability status.
+         */
+
         UpdateGunplaAvailabilityButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,7 +101,11 @@ public class GunplaDMSGUI {
             }
         });
 
-        // This custom method allows users to check the Gunpla's existence in the database to see whether the model exists in the database or not.
+        /**
+         * This custom method allows users to check the Gunpla's existence in the database
+         * to see whether the model exists in the database or not.
+         */
+
         CheckGunplaExistenceButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -96,7 +120,10 @@ public class GunplaDMSGUI {
             }
         });
 
-        // This method allows users to view the Gunpla stock lineup that are added into the database.
+        /**
+         * This method allows users to view the Gunpla stock lineup that are added into the database.
+         */
+
         ViewGunplaLineupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -108,12 +135,39 @@ public class GunplaDMSGUI {
             }
         });
 
-        // This method allows users to save the database into the provided file "gunpla_data.txt" as seen below.
+        /**
+         * This method allows users to load a file into the database
+         * with the provided file "GunplaDatabase.txt" as seen below.
+         */
+
+        LoadFileButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    BufferedReader reader = new BufferedReader(new FileReader("GunplaDatabase.txt"));
+                    for (Gunpla gunpla : GunplaDatabase.values()) {
+                        reader.read(gunpla.toString().toCharArray());
+                        reader.readLine();
+                    }
+                    reader.close();
+                    JOptionPane.showMessageDialog(frame, "File loaded successfully to the database.");
+                } catch (IOException exception) {
+                    exception.fillInStackTrace();
+                    JOptionPane.showMessageDialog(frame, "Error loading file to database.");
+                }
+            }
+        });
+
+        /**
+         * This method allows users to save the database
+         * into the provided file "GunplaDatabase.txt" as seen below.
+         */
+
         SaveFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    BufferedWriter writer = new BufferedWriter(new FileWriter("gunpla_data.txt"));
+                    BufferedWriter writer = new BufferedWriter(new FileWriter("GunplaDatabase.txt"));
                     for (Gunpla gunpla : GunplaDatabase.values()) {
                         writer.write(gunpla.toString());
                         writer.newLine();
@@ -127,7 +181,10 @@ public class GunplaDMSGUI {
             }
         });
 
-        // This method allows users to exit the GUI after use.
+        /**
+         * This method allows users to exit the GUI after use.
+         */
+
         ExitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -142,12 +199,19 @@ public class GunplaDMSGUI {
         panel.add(UpdateGunplaAvailabilityButton);
         panel.add(CheckGunplaExistenceButton);
         panel.add(ViewGunplaLineupButton);
+        panel.add(LoadFileButton);
         panel.add(SaveFileButton);
         panel.add(ExitButton);
 
         frame.add(panel);
         frame.setVisible(true);
     }
+
+    /**
+     * When running the program from the main method,
+     * users are connected to the GunplaDMSGUI.
+     * @param args used
+     */
 
     public static void main(String[] args) {
         new GunplaDMSGUI();
