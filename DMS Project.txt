@@ -8,7 +8,12 @@ Course: CEN Software Development 1
 import java.io.*;
 import java.util.*;
 
-// The Gunpla class objective is to have private commands that contain elements in preparation for user input of Gunpla data by mobile suit names, build grades, price, and availability so that the inputs can lay out a return
+/**
+ * The Gunpla class objective is to have private commands that contain elements in preparation for user input
+ * of Gunpla data by mobile suit names, build grades, price, and availability
+ * so that the inputs can lay out a return.
+ */
+
 class Gunpla {
     private String GunplaMobileSuitName;
     private String GunplaBuildGrade;
@@ -52,14 +57,27 @@ class Gunpla {
     }
 }
 
-// The GunplaDatabase main class contains methods for users to add, remove, update both the price and availability status, check existence, and view Gunpla lineup.
+/**
+ * The GunplaDatabase main class contains methods for users to add, remove,
+ * update both the price and availability status, check existence, and view Gunpla lineup.
+ */
+
 
 public class GunplaDatabase {
 
     private static final String DATABASE_FILE = "gunpla_data.txt";
     private static final List<Gunpla> database = new ArrayList<>();
 
-    // This application will ask users to add, remove, update retail price, and update availability of Gunpla by entering the 4 choices in the process when running the database which will return the input by users when users select the 6th option to view the Gunpla lineup, when users select the 5th option the can check the existence of Gunpla models in the database, and when the user is done inputting they can choose the 7th option to exit the application when the application is done being used. Users can even leave a rating too.
+    /**
+     * This application will ask users to add, remove, update retail price, and update availability of Gunpla
+     * by entering the 4 choices in the process when running the database which will return the input by users
+     * when users select the 6th option to view the Gunpla lineup,
+     * when users select the 5th option the can check the existence of Gunpla models in the database,
+     * and when the user is done inputting they can choose the 7th option to exit the application when the
+     * application is done being used. Users can even leave a rating too.
+     * @param args used.
+     */
+
 
     public static void main (String[] args) {
         LoadGunplaDatabase();
@@ -113,7 +131,15 @@ public class GunplaDatabase {
         System.out.println("Thank you for rating the Gunpla DMS. Your rating of the Gunpla DMS is greatly appreciated for feedback, and here's your rating: " + rating);
     }
 
-    // The AddGunpla method allows users to add in Gunpla into the database by inputting the name of the mobile suit fromthe Gundam franchise, build grade of the Gunpla models, retail price of the Gunpla model, and availability status of the Gunpla.
+    /**
+     * The AddGunpla method allows users to add in Gunpla into the database
+     * by inputting the name of the mobile suit from the Gundam franchise,
+     * build grade of the Gunpla models,
+     * retail price of the Gunpla model,
+     * and availability status of the Gunpla.
+     * @param scanner used.
+     */
+
 
     private static void AddGunpla(Scanner scanner) {
         System.out.print("Enter the Gunpla's Mobile Suit Name: ");
@@ -128,7 +154,14 @@ public class GunplaDatabase {
         System.out.println("Gunpla Added Successfully.");
     }
 
-    // The RemoveGunpla method allows users to remove Gunpla from the database by inputting the mobile suit name and the specific build grade.
+    /**
+     * The RemoveGunpla method allows users to remove Gunpla from the database
+     * by inputting the mobile suit name
+     * and the specific build grade.
+     * @return tag is used to return the printed statements shown below.
+     * @param scanner used.
+     */
+
 
     private static void RemoveGunpla(Scanner scanner) {
         System.out.print("Enter the Gunpla's Mobile Suit Name: ");
@@ -147,7 +180,14 @@ public class GunplaDatabase {
         System.out.println("Gunpla not found in the database.");
     }
 
-    // The UpdateGunplaPrice method allows users to update the price of Gunpla models from the database by first having to input the mobile suit name and build grade first, and then input the price numbers for an update.
+    /**
+     * The UpdateGunplaPrice method allows users to update the price of Gunpla models from the database
+     * by first having to input the mobile suit name and build grade first,
+     * and then input the price numbers for an update.
+     * @return tag is used to return the printed statements shown below.
+     * @param scanner used.
+     */
+
 
     private static void UpdateGunplaPrice(Scanner scanner) {
         System.out.print("Enter the Gunpla's Mobile Suit Name: ");
@@ -166,7 +206,14 @@ public class GunplaDatabase {
         System.out.println("Gunpla not found in the database.");
     }
 
-    // The UpdateGunplaAvailability method allows users to update the availability status of Gunpla models from the database by first having to input the mobile suit name and build grade first, and then input the availability status for an update.
+    /**
+     * The UpdateGunplaAvailability method allows users to update the availability status of Gunpla models
+     * from the database by first having to input the mobile suit name and build grade first,
+     * and then input the availability status for an update.
+     * @return tag is used to return the printed statements shown below.
+     * @param scanner used.
+     */
+
 
     private static void UpdateGunplaAvailability(Scanner scanner) {
         System.out.print("Enter the Gunpla's Mobile Suit Name: ");
@@ -185,7 +232,13 @@ public class GunplaDatabase {
         System.out.println("Gunpla not found in the database.");
     }
 
-    // The CheckGunplaExistence is a custom method which allows users to check the existence of the Gunpla model that is added into the database.
+    /**
+     * The CheckGunplaExistence is a custom method which allows users to check the existence
+     * of the Gunpla model that is added into the database.
+     * @return tag is used to return the printed statements shown below.
+     * @param scanner used.
+     */
+
 
     private static void CheckGunplaExistence(Scanner scanner) {
         System.out.print("Enter the Gunpla's Mobile Suit Name: ");
@@ -201,7 +254,11 @@ public class GunplaDatabase {
         System.out.println("Gunpla not found in the database.");
     }
 
-    // The ViewGunplaLineup is a method in which users can check out the lineup of Gunpla models that are inputted into the database.
+    /**
+     * The ViewGunplaLineup is a method in which users can check out the lineup of Gunpla models
+     * that are inputted into the database.
+     */
+
 
     private static void ViewGunplaLineup() {
         if(database.isEmpty()) {
